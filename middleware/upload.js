@@ -1,6 +1,6 @@
 const multer = require("multer");
 
-let storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, __basedir + "/uploads");
   },
@@ -13,9 +13,8 @@ let storage = multer.diskStorage({
   },
 });
 
-let uploadFile = multer({
+const uploadFile = multer({
   storage: storage,
 })
 
-// Is this really middleware anymore or just a util file?
 module.exports = uploadFile;
