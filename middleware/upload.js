@@ -1,22 +1,21 @@
-// import the multer module before configuring it to use the disc storage engine
-const util = require("util");
 const multer = require("multer");
-const maxSize = 20 * 1024 * 1024; // TODO: Get rid of this
+
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __basedir + "/resources/static/assets/uploads/");
+    cb(null, __basedir + "/uploads");
   },
   filename: (req, file, cb) => {
     console.log(file.originalname);
     cb(null, file.originalname);
+    //TODO: Use content type to determine extension and do something like below
+    //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    //cb(null, file.fieldname + '-' + uniqueSuffix + '.png')
   },
 });
 
 let uploadFile = multer({
   storage: storage,
-  limits: { fileSize: maxSize },
-}).single("file");
+})
 
-// create the exported middleware object
-let uploadFileMiddleware = util.promisify(uploadFile);
-module.exports = uploadFileMiddleware;
+// Is this really middleware anymore or just a util file?
+module.exports = uploadFile;
