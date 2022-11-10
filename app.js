@@ -5,13 +5,14 @@ let logger = require('morgan');
 
 let indexRouter = require('./routes/index');
 
-const fileUpload = require('./middleware/upload')
+const uploadFile = require('./middleware/upload')
 const upload_controller = require('./controllers/upload_controller')
+const download_controller = require('./controllers/download_controller')
 const sketch = require('./middleware/sketch')
 
 let app = express();
 
-app.post('/api/render', fileUpload.single('image'), upload_controller, sketch);
+app.post('/api/render', uploadFile.single('image'), upload_controller, sketch, download_controller);
 
 app.use(logger('dev'));
 app.use(express.json());

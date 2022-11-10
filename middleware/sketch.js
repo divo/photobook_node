@@ -26,18 +26,18 @@ const loadImage = async (url) => {
   });
 };
 
-const render_sketch = async (req, res) => {
+const render_sketch = async (req, res, next) => {
   // TODO: This seems pretty dumb, I should use a memory store.
   const img = await loadImage(req.file.path);
-
   await canvasSketch(sketch(img), settings)
 
   // Once sketch is loaded & rendered, stream a PNG with node-canvas
   // This is also dumb, it should render to an in memory object
   // TODO: Render to in memory
+  const out = fs.createWriteStream('./output/' + req.file.originalname);
   const stream = canvas.createPNGStream();
   stream.pipe(out);
-  out.on('finish', () => console.log('Done rendering'));
+  out.on('finish', () => next());
 }
 
 module.exports = render_sketch;
