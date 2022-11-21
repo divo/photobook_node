@@ -12,6 +12,10 @@ const sketch = require('./middleware/sketch')
 
 let app = express();
 
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
+
 app.post('/api/render', uploadFile.single('image'), upload_controller, sketch, download_controller);
 
 app.use(logger('dev'));
