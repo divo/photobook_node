@@ -1,6 +1,6 @@
-const canvasSketch = require('canvas-sketch');
-const Canvas = require('canvas');
-const fs = require('fs');
+import canvasSketch from 'canvas-sketch'
+import Canvas from 'canvas'
+import fs from 'fs'
 
 const canvas = Canvas.createCanvas();
 
@@ -40,4 +40,4 @@ const render_sketch = async (req, res, next) => {
   out.on('finish', () => next());
 }
 
-module.exports = render_sketch;
+export default render_sketch;

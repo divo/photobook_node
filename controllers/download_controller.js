@@ -10,5 +10,5 @@ const download = (req, res) => {
   });
 };
 
-module.exports = download;
+export default download;
 

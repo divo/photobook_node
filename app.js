@@ -1,16 +1,20 @@
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import {fileURLToPath} from 'url';
 
-let indexRouter = require('./routes/index');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const uploadFile = require('./middleware/upload')
-const upload_controller = require('./controllers/upload_controller')
-const download_controller = require('./controllers/download_controller')
-const sketch = require('./middleware/sketch')
-const render_controller = require('./controllers/render_controller') // There must be a native way to autoload these
-const fetch_images = require('./middleware/fetch_images')
+import indexRouter from './routes/index.js';
+
+import uploadFile from './middleware/upload.js';
+import upload_controller from './controllers/upload_controller.js'
+import download_controller from './controllers/download_controller.js'
+import sketch from './middleware/sketch.js'
+import render_controller from './controllers/render_controller.js' // There must be a native way to autoload the
+import fetch_images from './middleware/fetch_images.js'
 
 let app = express();
 
@@ -31,4 +35,4 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 global.__basedir = __dirname;
 
-module.exports = app;
+export default app;

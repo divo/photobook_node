@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 import { got } from 'got';
 
 // The idea is for this thing to kick off a load of fetch jobs
@@ -10,4 +10,4 @@ const fetch_images = async(req, res, next) => {
   };
 };
 
-module.exports = fetch_images;
+export default fetch_images;

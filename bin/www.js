@@ -4,15 +4,17 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('node:server');
-var http = require('http');
+import app from '../app.js';
+import debugLib from 'debug';
+import http from 'http';
+const debug = debugLib('photo_render:server');
+import dotenv from 'dotenv';
 
 /**
  * Setup env
  */
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+  dotenv.config();
 }
 
 /**
