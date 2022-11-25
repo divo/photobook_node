@@ -1,43 +1,68 @@
-import canvasSketch from 'canvas-sketch'
-import Canvas from 'canvas'
-import fs from 'fs'
+import canvasSketch from 'canvas-sketch';
+import { createCanvas, loadImage } from 'canvas';
+//import Canvas from 'canvas'
+import fs from 'fs';
+import extension from '../lib/file_util.js';
 
-const canvas = Canvas.createCanvas();
+const safe_area = 15; // mm!
 
-const settings = {
-  canvas,
-  dimensions: [ 400, 480 ],
-};
-
-const sketch = (img) => {
-  return ({ context, width, height }) => {
-    context.fillStyle = 'blue';
+const sketch = ({width, height, canvas, data}) => {
+  return ({ context, width, height, data, canvas }) => {
+    context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
-    context.drawImage(img, 0, 0);
+
+    let scale;
+    let y = 0;
+    let x = 0;
+
+    if (is_landscape(data)) {
+      scale = width / data.width;
+      y = (height - (data.height * scale)) / 2;
+    } else {
+      scale = height / data.height;
+      x = (width - (data.width * scale)) / 2;
+    }
+
+    context.drawImage(data, safe_area + x, safe_area + y, (data.width * scale) - (safe_area * 2), (data.height * scale) - (safe_area * 2));
   };
 };
 
-const loadImage = async (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Canvas.Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject();
-    img.src = url;
-  });
+const is_landscape = (image) => {
+  return image.width > image.height;
 };
 
 const render_sketch = async (req, res, next) => {
-  // TODO: This seems pretty dumb, I should use a memory store.
-  const img = await loadImage(req.file.path);
-  await canvasSketch(sketch(img), settings)
+  debugger;
+  req.body.pages.forEach(async (page) => {
+    const canvas = createCanvas();
 
-  // Once sketch is loaded & rendered, stream a PNG with node-canvas
-  // This is also dumb, it should render to an in memory object
-  // TODO: Render to in memory
-  const out = fs.createWriteStream('./output/' + req.file.originalname);
-  const stream = canvas.createPNGStream();
-  stream.pipe(out);
-  out.on('finish', () => next());
+    const settings = {
+      canvas,
+      dimensions: [210, 210],
+      pixelsPerInch: 300,
+      orientation: 'landscape',
+      units: 'mm',
+      hotkeys: false,
+      scaleToFitPadding: 0,
+    };
+
+    const key = page.key;
+    const ext = extension(page.content_type);
+    // TODO: This seems pretty dumb, I should use a memory store.
+    let img = await loadImage('./tmp/images/' + key + ext);
+    settings.data = img;
+
+    await canvasSketch.canvasSketch(sketch, settings);
+
+    const out = fs.createWriteStream('./tmp/output/' + key + '.jpg');
+    //const stream = canvas.createPDFStream();
+    const stream = canvas.createJPEGStream();
+    stream.pipe(out);
+    out.on('finish', () => console.log('Done rendering'));
+    // How tf do I collect and await all these promises?
+  });
+
+  //  out.on('finish', () => next());
 }
 
 export default render_sketch;
