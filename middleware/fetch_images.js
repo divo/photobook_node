@@ -1,27 +1,30 @@
 import fs from 'fs';
 import { got } from 'got';
+import stream from 'stream';
+import extension from '../lib/file_util.js'
+import { promisify } from "util";
 
 // The idea is for this thing to kick off a load of fetch jobs
 const fetch_images = async(req, res, next) => {
-  req.body.pages.forEach(function(page){
+  const fetch_promises = [];
+
+  req.body.pages.forEach(function(page) {
+    const pipeline = promisify(stream.pipeline);
     const image_url = page.image_url;
     const key = page.key;
     const ext = extension(page.content_type);
-    console.log('Fatching: ' + image_url);
-    got.stream(image_url).pipe(fs.createWriteStream('./tmp/images/' + key + ext));
-  });
-};
+    console.log('Fetching: ' + image_url);
 
-const extension = (content_type) => {
-  // TODO: Add support for HEIC etc
-  switch (content_type) {
-    case 'image/jpeg':
-      return '.jpg';
-    case 'image/png':
-      return '.png';
-    default:
-      return '';
-  }
+    const download_stream = got.stream(image_url);
+    const writer = fs.createWriteStream('./tmp/images/' + key + ext);
+    const download_promise = pipeline(download_stream, writer);
+    fetch_promises.push(download_promise);
+  });
+
+  Promise.all(fetch_promises).then(() => {
+    console.log('All images downloaded');
+    next();
+  });
 };
 
 export default fetch_images;
