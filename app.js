@@ -31,7 +31,10 @@ app.get('/ping', (req, res) => {
 
 //app.post('/api/render', uploadFile.single('image'), upload_controller, sketch, download_controller);
 
-app.post('/api/render_album', render_controller, fetch_images, sketch);
+app.post('/api/render_album', render_controller, fetch_images, sketch, (req, res) => {
+  console.log('[200] Album render complete');
+  res.status(200);
+});
 
 global.__basedir = __dirname;
 

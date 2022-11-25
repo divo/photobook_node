@@ -32,37 +32,42 @@ const is_landscape = (image) => {
 };
 
 const render_sketch = async (req, res, next) => {
-  debugger;
+  const render_promises = [];
+
   req.body.pages.forEach(async (page) => {
-    const canvas = createCanvas();
+    const render_promise = new Promise( async(resolve, reject) => {
+      const canvas = createCanvas();
 
-    const settings = {
-      canvas,
-      dimensions: [210, 210],
-      pixelsPerInch: 300,
-      orientation: 'landscape',
-      units: 'mm',
-      hotkeys: false,
-      scaleToFitPadding: 0,
-    };
+      const settings = {
+        canvas,
+        dimensions: [210, 210],
+        pixelsPerInch: 300,
+        orientation: 'landscape',
+        units: 'mm',
+        hotkeys: false,
+        scaleToFitPadding: 0,
+      };
 
-    const key = page.key;
-    const ext = extension(page.content_type);
-    // TODO: This seems pretty dumb, I should use a memory store.
-    let img = await loadImage('./tmp/images/' + key + ext);
-    settings.data = img;
+      const key = page.key;
+      const ext = extension(page.content_type);
+      // TODO: This seems pretty dumb, I should use a memory store.
+      let img = await loadImage('./tmp/images/' + key + ext);
+      settings.data = img;
 
-    await canvasSketch.canvasSketch(sketch, settings);
+      await canvasSketch.canvasSketch(sketch, settings);
 
-    const out = fs.createWriteStream('./tmp/output/' + key + '.jpg');
-    //const stream = canvas.createPDFStream();
-    const stream = canvas.createJPEGStream();
-    stream.pipe(out);
-    out.on('finish', () => console.log('Done rendering'));
-    // How tf do I collect and await all these promises?
+      const out = fs.createWriteStream('./tmp/output/' + key + '.jpg');
+      const file_stream = canvas.createJPEGStream({ quality: 1.0 }); // This call is sync and some update will probably make it async
+      await file_stream.pipe(out);
+      out.on('finish', () => { resolve(); } );
+    });
+    render_promises.push(render_promise);
   });
 
-  //  out.on('finish', () => next());
+  Promise.all(render_promises).then(() => {
+    console.log('Rendering complete');
+    next();
+  });
 }
 
 export default render_sketch;
