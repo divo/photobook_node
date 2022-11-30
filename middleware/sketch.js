@@ -36,7 +36,7 @@ const render_sketch = async (req, res, next) => {
 
   req.body.pages.forEach(async (page) => {
     const render_promise = new Promise( async(resolve, reject) => {
-      const canvas = createCanvas();
+      const canvas = createCanvas(210, 210, 'pdf');
 
       const settings = {
         canvas,
@@ -56,8 +56,9 @@ const render_sketch = async (req, res, next) => {
 
       await canvasSketch.canvasSketch(sketch, settings);
 
-      const out = fs.createWriteStream('./tmp/output/' + key + '.jpg');
-      const file_stream = canvas.createJPEGStream({ quality: 1.0 }); // This call is sync and some update will probably make it async
+      const out = fs.createWriteStream('./tmp/output/' + key + '.pdf');
+      const file_stream = canvas.createPDFStream(); // This call is sync and some update will probably make it async
+
       await file_stream.pipe(out);
       out.on('finish', () => { resolve(); } );
     });
