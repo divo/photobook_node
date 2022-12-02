@@ -26,12 +26,11 @@ const sketch = ({width, height, canvas, data}) => {
 
     context.drawImage(img, x, y, (img.width * scale), s_height);
 
-    debugger;
-    const fontSize = 18// * scale;
+    const fontSize = 6; //TODO: What is going on with the scaling here? What is canvas sketch doing? It's all in mm??
     context.fillStyle = 'black';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.font = `normal ${fontSize}px Helvetica`;
+    context.font = `normal ${fontSize}pt Helvetica`;
     context.fillText(name, width / 2, s_height + (( height - s_height) / 2), width);
  };
 };
