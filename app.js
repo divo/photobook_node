@@ -12,6 +12,7 @@ import indexRouter from './routes/index.js';
 import uploadFile from './middleware/upload.js';
 import upload_controller from './controllers/upload_controller.js';
 import download_controller from './controllers/download_controller.js';
+import cover from './middleware/cover.js';
 import sketch from './middleware/sketch.js';
 import render_controller from './controllers/render_controller.js'; // There must be a native way to autoload the
 import fetch_images from './middleware/fetch_images.js';
@@ -32,7 +33,7 @@ app.get('/ping', (req, res) => {
 
 //app.post('/api/render', uploadFile.single('image'), upload_controller, sketch, download_controller);
 
-app.post('/api/render_album', render_controller, fetch_images, sketch, merge_pdf, (req, res) => {
+app.post('/api/render_album', render_controller, fetch_images, cover, sketch, merge_pdf, (req, res) => {
   console.log('[200] Album render complete');
   res.status(200);
 });

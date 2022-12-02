@@ -5,6 +5,9 @@ const merge_pdf = async (req, res, next) => {
   const pdfsToMerge = [];
   const mergedPdf = await PDFDocument.create();
 
+  const coverBuffer = fs.readFileSync('./tmp/output/cover.pdf');
+  pdfsToMerge.push(coverBuffer);
+
   req.body.pages.forEach(async (page) => {
     const key = page.key;
     const pdfBuffer = fs.readFileSync('./tmp/output/' + key + '.pdf');
