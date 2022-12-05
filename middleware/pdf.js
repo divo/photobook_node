@@ -11,6 +11,11 @@ const merge_pdf = async (req, res, next) => {
   const coverBuffer = fs.readFileSync('./tmp/output/' + job_id + '/cover.pdf');
   pdfsToMerge.push(coverBuffer);
 
+  const insideCoverBuffer = fs.readFileSync('./tmp/output/' + job_id + '/inside_cover.pdf');
+  if (req.body.magazine) { // Requirement from Printers
+    pdfsToMerge.push(insideCoverBuffer);
+  }
+
   // Add all the pages
   // TODO: Just use the directory contents? Will probably mess up the ordering
   req.body.pages.forEach(async (page) => {
@@ -18,6 +23,15 @@ const merge_pdf = async (req, res, next) => {
     const pdfBuffer = fs.readFileSync('./tmp/output/' + job_id + '/' + key + '.pdf');
     pdfsToMerge.push(pdfBuffer);
   });
+
+  // Use the blank inside at the end of the pdf
+  // If even no. of pages add two blanks
+  // if odd no of pages add one blank
+  // This requirement is from the Printer
+  if (pdfsToMerge.length % 2) {
+    pdfsToMerge.push(insideCoverBuffer);
+  }
+  pdfsToMerge.push(insideCoverBuffer);
 
   for (const pdfBytes of pdfsToMerge) {
     const pdf = await PDFDocument.load(pdfBytes);
