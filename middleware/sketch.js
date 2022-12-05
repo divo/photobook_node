@@ -1,29 +1,26 @@
-import canvasSketch from 'canvas-sketch';
-import { createCanvas, loadImage } from 'canvas';
-//import Canvas from 'canvas'
-import fs from 'fs';
-import extension from '../lib/file_util.js';
-
-const safe_area = 15; // mm!
+import render_page from '../lib/render_page.js';
 
 const sketch = ({width, height, canvas, data}) => {
   return ({ context, width, height, data, canvas }) => {
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, width, height);
+    const safe_area = 15; // mm!
 
     let scale;
     let y = 0;
     let x = 0;
 
-    if (is_landscape(data)) {
-      scale = width / data.width;
-      y = (height - (data.height * scale)) / 2;
+    const img = data['img'];
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, width, height);
+
+    if (is_landscape(img)) {
+      scale = width / img.width;
+      y = (height - (img.height * scale)) / 2;
     } else {
-      scale = height / data.height;
-      x = (width - (data.width * scale)) / 2;
+      scale = height / img.height;
+      x = (width - (img.width * scale)) / 2;
     }
 
-    context.drawImage(data, safe_area + x, safe_area + y, (data.width * scale) - (safe_area * 2), (data.height * scale) - (safe_area * 2));
+    context.drawImage(img, safe_area + x, safe_area + y, (img.width * scale) - (safe_area * 2), (img.height * scale) - (safe_area * 2));
   };
 };
 
@@ -36,34 +33,7 @@ const render_sketch = async (req, res, next) => {
   const job_id = req.body.job_id;
 
   req.body.pages.forEach(async (page) => {
-    const render_promise = new Promise( async(resolve, reject) => {
-      const canvas = createCanvas(210, 210, 'pdf');
-
-      const settings = {
-        canvas,
-        dimensions: [210, 210],
-        pixelsPerInch: 300,
-        orientation: 'landscape',
-        units: 'mm',
-        hotkeys: false,
-        scaleToFitPadding: 0,
-      };
-
-      const key = page.key;
-      const ext = extension(page.content_type);
-      // TODO: This seems pretty dumb, I should use a memory store.
-      let img = await loadImage('./tmp/images/' + job_id + '/' + key + ext);
-      settings.data = img;
-
-      await canvasSketch.canvasSketch(sketch, settings);
-
-      const out = fs.createWriteStream('./tmp/output/' + job_id + '/' + key + '.pdf');
-      const file_stream = canvas.createPDFStream(); // This call is sync and some update will probably make it async
-
-      await file_stream.pipe(out);
-      out.on('finish', () => { resolve(); } );
-    });
-    render_promises.push(render_promise);
+    render_promises.push(render_page(sketch, page, job_id));
   });
 
   Promise.all(render_promises).then(() => {

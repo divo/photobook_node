@@ -7,9 +7,12 @@ const merge_pdf = async (req, res, next) => {
 
   const job_id = req.body.job_id;
 
+  // Add the cover
   const coverBuffer = fs.readFileSync('./tmp/output/' + job_id + '/cover.pdf');
   pdfsToMerge.push(coverBuffer);
 
+  // Add all the pages
+  // TODO: Just use the directory contents? Will probably mess up the ordering
   req.body.pages.forEach(async (page) => {
     const key = page.key;
     const pdfBuffer = fs.readFileSync('./tmp/output/' + job_id + '/' + key + '.pdf');
@@ -27,7 +30,6 @@ const merge_pdf = async (req, res, next) => {
   const buf = await mergedPdf.save();
   const album_id = req.body.photo_album;
   const path = './tmp/pdf/' + job_id + '/' + album_id + '_' + job_id + '.pdf';
-  debugger;
   fs.open(path, 'w', function (err, fd) {
     fs.write(fd, buf, 0, buf.length, null, function (err) {
       fs.close(fd, function () {
