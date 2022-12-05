@@ -44,6 +44,7 @@ const render_cover = async (req, res, next) => {
 
   // This works because the cover is already part of the album
   // If it becomes a distrinct image, update the fetcher to download it
+  const job_id = req.body.job_id;
   const page = req.body.cover;
   const render_promise = new Promise( async(resolve, reject) => {
     const canvas = createCanvas(210, 210, 'pdf'); //FIXME: I need to pass dimensions to set the type, they don't seem to break anything?
@@ -61,12 +62,12 @@ const render_cover = async (req, res, next) => {
     const key = page.key;
     const ext = extension(page.content_type);
     // TODO: This seems pretty dumb, I should use a memory store.
-    let img = await loadImage('./tmp/images/' + key + ext);
+    let img = await loadImage('./tmp/images/' + job_id + '/' + key + ext);
     settings.data = { img: img, name: page.name };
 
     await canvasSketch.canvasSketch(sketch, settings);
 
-    const out = fs.createWriteStream('./tmp/output/cover.pdf');
+    const out = fs.createWriteStream('./tmp/output/' + job_id + '/cover.pdf');
     const file_stream = canvas.createPDFStream(); // This call is sync and some update will probably make it async
 
     await file_stream.pipe(out);
@@ -75,7 +76,7 @@ const render_cover = async (req, res, next) => {
   render_promises.push(render_promise);
 
   Promise.all(render_promises).then(() => {
-    console.log('Cover rendering complete');
+    console.log('[' + job_id + ']' + ' Cover rendering complete');
     next();
   });
 }

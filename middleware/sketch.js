@@ -33,6 +33,7 @@ const is_landscape = (image) => {
 
 const render_sketch = async (req, res, next) => {
   const render_promises = [];
+  const job_id = req.body.job_id;
 
   req.body.pages.forEach(async (page) => {
     const render_promise = new Promise( async(resolve, reject) => {
@@ -51,12 +52,12 @@ const render_sketch = async (req, res, next) => {
       const key = page.key;
       const ext = extension(page.content_type);
       // TODO: This seems pretty dumb, I should use a memory store.
-      let img = await loadImage('./tmp/images/' + key + ext);
+      let img = await loadImage('./tmp/images/' + job_id + '/' + key + ext);
       settings.data = img;
 
       await canvasSketch.canvasSketch(sketch, settings);
 
-      const out = fs.createWriteStream('./tmp/output/' + key + '.pdf');
+      const out = fs.createWriteStream('./tmp/output/' + job_id + '/' + key + '.pdf');
       const file_stream = canvas.createPDFStream(); // This call is sync and some update will probably make it async
 
       await file_stream.pipe(out);
@@ -66,7 +67,7 @@ const render_sketch = async (req, res, next) => {
   });
 
   Promise.all(render_promises).then(() => {
-    console.log('Rendering complete');
+    console.log('[' + job_id + ']' + ' Rendering complete');
     next();
   });
 }
