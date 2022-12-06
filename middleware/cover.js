@@ -1,4 +1,4 @@
-import render_page from '../lib/render_page.js';
+import render_page from '../lib/render_setup.js';
 
 const sketch = ({width, height, canvas, data}) => {
   return ({ context, width, height, data, canvas }) => {
