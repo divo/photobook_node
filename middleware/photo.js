@@ -2,10 +2,8 @@ import render_page from '../lib/render_setup.js';
 import { createCanvas } from 'canvas';
 
 const sketch = async ({width, height, canvas, data}) => {
-  // const safe_area = 15; // mm!
   let safe_area = 25; // mm!
   const fontSize = 4;
-  let scaledFontSize = fontSize;
   const textSafeArea = 10;
   const img = data['img'];
   const address = data['address'];
@@ -14,7 +12,6 @@ const sketch = async ({width, height, canvas, data}) => {
 
   do {
     pos = calculatePositions(safe_area, img, width, height);
-    scaledFontSize = fontSize * pos.scale;
     safe_area = safe_area + 5;
   } while (address != '' && isTextCropped(pos.y, pos.s_height, textSafeArea, fontSize, height))
 
