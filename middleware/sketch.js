@@ -18,8 +18,6 @@ const sketch = async ({width, height, canvas, data}) => {
     safe_area = safe_area + 5;
   } while (address != '' && isTextCropped(pos.y, pos.s_height, textSafeArea, fontSize, height))
 
-  const text = await renderText(address, pos.scale, scaledFontSize);
-
   return ({ context, width, height, data, canvas }) => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
