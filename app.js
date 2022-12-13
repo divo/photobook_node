@@ -15,7 +15,7 @@ import download_controller from './controllers/download_controller.js';
 import setup_dir from './middleware/job_setup.js'
 import cover from './middleware/cover.js';
 import inside_cover from './middleware/inside_cover.js';
-import sketch from './middleware/sketch.js';
+import photos from './middleware/photo.js';
 import render_controller from './controllers/render_controller.js'; // There must be a native way to autoload the
 import fetch_images from './middleware/fetch_images.js';
 import merge_pdf from './middleware/pdf.js';
@@ -35,7 +35,7 @@ app.get('/ping', (req, res) => {
 
 //app.post('/api/render', uploadFile.single('image'), upload_controller, sketch, download_controller);
 
-app.post('/api/render_album', render_controller, setup_dir, fetch_images, cover, inside_cover, sketch, merge_pdf, (req, res) => {
+app.post('/api/render_album', render_controller, setup_dir, fetch_images, cover, inside_cover, photos, merge_pdf, (req, res) => {
   console.log('[200] Album render complete');
 });
 

@@ -69,7 +69,7 @@ const is_landscape = (image) => {
   return image.width > image.height;
 };
 
-const render_sketch = async (req, res, next) => {
+const photos = async (req, res, next) => {
   const render_promises = [];
   const job_id = req.body.job_id;
 
@@ -83,4 +83,4 @@ const render_sketch = async (req, res, next) => {
   });
 }
 
-export default render_sketch;
+export default photos;
