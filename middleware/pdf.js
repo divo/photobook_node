@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { PDFDocument } from 'pdf-lib';
+import child_process from 'child_process';
 
 const merge_pdf = async (req, res, next) => {
   const pdfsToMerge = [];
@@ -48,10 +49,27 @@ const merge_pdf = async (req, res, next) => {
     fs.write(fd, buf, 0, buf.length, null, function (err) {
       fs.close(fd, function () {
         console.log('[' + job_id + ']' + ' Wrote pdf: ' + album_id + ' successfully');
+        scale_pdf(path)
         next();
       });
     });
   });
 };
+
+const scale_pdf = (filename) => {
+  const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=842 -dDEVICEHEIGHTPOINTS=595 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
+
+  child_process.execSync(gs_command, (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+}
 
 export default merge_pdf;
