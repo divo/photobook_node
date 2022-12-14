@@ -49,7 +49,9 @@ const merge_pdf = async (req, res, next) => {
     fs.write(fd, buf, 0, buf.length, null, function (err) {
       fs.close(fd, function () {
         console.log('[' + job_id + ']' + ' Wrote pdf: ' + album_id + ' successfully');
+        console.log('Scaling PDF to A4 size');
         scale_pdf(path)
+        console.log('Scaling complete. Finished processing document');
         next();
       });
     });
