@@ -59,7 +59,7 @@ const merge_pdf = async (req, res, next) => {
 };
 
 const scale_pdf = (filename) => {
-  const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=842 -dDEVICEHEIGHTPOINTS=595 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
+  const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=595 -dDEVICEHEIGHTPOINTS=420 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
 
   child_process.execSync(gs_command, (error, stdout, stderr) => {
     if (error) {
