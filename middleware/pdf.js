@@ -6,6 +6,7 @@ const merge_pdf = async (req, res, next) => {
   const pdfsToMerge = [];
   const mergedPdf = await PDFDocument.create();
   const job_id = req.body.job_id;
+  const size = req.body.size;
 
   // Add the cover
   const coverBuffer = fs.readFileSync('./tmp/output/' + job_id + '/cover.pdf');
@@ -57,8 +58,8 @@ const merge_pdf = async (req, res, next) => {
     fs.write(fd, buf, 0, buf.length, null, function (err) {
       fs.close(fd, function () {
         console.log('[' + job_id + ']' + ' Wrote pdf: ' + album_id + ' successfully');
-        console.log('Scaling PDF to A4 size');
-        scale_pdf(path)
+        console.log('Scaling PDF');
+        scale_pdf(path, size)
         console.log('Scaling complete. Finished processing document');
         next();
       });
@@ -66,8 +67,11 @@ const merge_pdf = async (req, res, next) => {
   });
 };
 
-const scale_pdf = (filename) => {
-  const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=595 -dDEVICEHEIGHTPOINTS=420 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
+const scale_pdf = (filename, size) => {
+  // NOW: Scale this too
+  const width = Math.round((size[0] * 72) / 25.4);
+  const height = Math.round((size[1] * 72) / 25.4);
+  const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=${width} -dDEVICEHEIGHTPOINTS=${height} -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
 
   child_process.execSync(gs_command, (error, stdout, stderr) => {
     if (error) {

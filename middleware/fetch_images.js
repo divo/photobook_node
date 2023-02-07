@@ -13,6 +13,7 @@ Array.prototype.each_slice = function (size, callback){
 const slice_size = 15;
 
 // The idea is for this thing to kick off a load of fetch jobs
+// TODO: Handle failre and retry
 const fetch_images = async(req, res, next) => {
   const job_id = req.body.job_id;
   const pages = req.body.pages;
