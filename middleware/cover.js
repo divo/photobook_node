@@ -1,5 +1,5 @@
 import render_page from '../lib/render_setup.js';
-import { cover_sketch } from 'sketches'
+import { cover_sketch } from '@divo/photobook-sketches'
 
 const is_landscape = (image) => {
   return image.width > image.height;

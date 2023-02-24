@@ -1,6 +1,6 @@
 import render_page from '../lib/render_setup.js';
 import { createCanvas } from 'canvas';
-import { photo_sketch, section_sketch } from 'sketches';
+import { photo_sketch, section_sketch } from '@divo/photobook-sketches';
 
 const photos = async (req, res, next) => {
   const render_promises = [];
