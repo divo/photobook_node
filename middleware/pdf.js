@@ -68,7 +68,6 @@ const merge_pdf = async (req, res, next) => {
 };
 
 const scale_pdf = (filename, size) => {
-  // NOW: Scale this too
   const width = Math.round((size[0] * 72) / 25.4);
   const height = Math.round((size[1] * 72) / 25.4);
   const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=${width} -dDEVICEHEIGHTPOINTS=${height} -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
