@@ -7,4 +7,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3000
-CMD [ "node", "bin/www.js" ]
+CMD ["pm2", "delete", "photobook-node-app"]
+CMD ["pm2", "start", "bin/www.js", "--name", "photobook-node-app"]
