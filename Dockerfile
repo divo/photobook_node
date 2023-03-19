@@ -10,5 +10,4 @@ RUN npm install
 RUN npm install pm2 -g
 COPY . .
 EXPOSE 3001
-CMD ["pm2", "start", "bin/www.js", "--name", "photobook-node-app"]
-CMD ["/bin/bash"]
+CMD ["pm2-runtime", "bin/www.js", "--name", "photobook-node-app"]
