@@ -8,6 +8,7 @@ const cleanup = function(req, res, next) {
 
   fs.rmSync('./tmp/images/' + job_id, { recursive: true, force: true });
   fs.rmSync('./tmp/output/' + job_id, { recursive: true, force: true });
+  fs.rmSync('./tmp/pdf/' + job_id, { recursive: true, force: true });
   console.log('File cleanup complete');
   next();
 }
