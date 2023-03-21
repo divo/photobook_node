@@ -1,4 +1,4 @@
-const response_upload = (req, res) => {
+const response_upload = (req, res, next) => {
   const job_id = req.body.job_id;
   const album_id = req.body.photo_album;
 
@@ -15,6 +15,7 @@ const response_upload = (req, res) => {
     }
     else {
       console.log('Sent:', file_name);
+      res.status(200);
       next();
     }
   });
