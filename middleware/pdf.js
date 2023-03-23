@@ -2,7 +2,7 @@ import fs from 'fs';
 import { PDFDocument } from 'pdf-lib';
 import util from 'util';
 import child_process from 'child_process';
-import { spine } from './cover.js';
+import { cover_width } from './cover.js';
 
 const exec = util.promisify(child_process.exec);
 
@@ -52,9 +52,9 @@ const merge_pdf = async (req, res, next) => {
 
   // Build and scale the cover
   await build_pdf(cover_path, [cover]);
-  const no_pages = req.body.pages.length;
-  const cover_width = (size[0] * 2) + spine(no_pages);
-  await scale_pdf(cover_path, [cover_width, size[1]]);
+  const spine_width = req.body.spine_width;
+  const c_width = cover_width(size, spine_width);
+  await scale_pdf(cover_path, [c_width, size[1]]);
 
   // Build and scale the content
   const album_path = build_path(job_id, album_id + '_content');
