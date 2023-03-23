@@ -57,12 +57,15 @@ const merge_pdf = async (req, res, next) => {
   await scale_pdf(cover_path, [cover_width, size[1]]);
 
   // Build and scale the content
-  const album_path = build_path(job_id, album_id);
+  const album_path = build_path(job_id, album_id + '_content');
   await build_pdf(album_path, pdfsToMerge);
   await scale_pdf(album_path, size)
+  console.log('Scaling complete.');
+
+  const result_path = build_path(job_id, album_id);
+  await combine_pdfs(result_path + '_scaled.pdf', [cover_path + '_scaled.pdf', album_path + '_scaled.pdf']);
 
   console.log('[' + job_id + ']' + ' Wrote pdf: ' + album_id + ' successfully');
-  console.log('Scaling complete. Finished processing document');
   next();
 };
 
@@ -93,6 +96,15 @@ const scale_pdf = async (filename, size) => {
   const height = Math.round((size[1] * 72) / 25.4);
   const gs_command = `gs -o ${filename}_scaled.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=${width} -dDEVICEHEIGHTPOINTS=${height} -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 ${filename}`
 
+  try {
+    const { stdout, stderr } = await exec(gs_command);
+  } catch (e) {
+    console.error(e); // should contain code (exit code) and signal (that caused the termination).
+  }
+}
+
+const combine_pdfs = async (output, files) => {
+  const gs_command = `gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=${output} -dBATCH ${files.join(' ')}`
   try {
     const { stdout, stderr } = await exec(gs_command);
   } catch (e) {
