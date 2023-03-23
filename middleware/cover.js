@@ -24,7 +24,7 @@ const render_cover = async (req, res, next) => {
   });
 }
 
-const spine = (count) => {
+export const spine = (count) => {
   return count / 17.49781277 // constant from the printers
 }
 
