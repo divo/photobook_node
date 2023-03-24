@@ -6,7 +6,7 @@ import { promisify } from "util";
 
 var job_id = null;
 var size = null; // ugh
-const slice_size = 10;
+const slice_size = 5;
 
 const photos = async (req, res, next) => {
   job_id = req.body.job_id;
