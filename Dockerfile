@@ -1,6 +1,8 @@
 # sudo docker build . -t divodivenson/photobook-node
-# docker buildx build --platform linux/amd64 -t divodivenson/photobook-node .
+# sudo docker ps
+# sudo docker stop <container_id>
 # sudo docker run -it -p 3001:3001 -d divodivenson/photobook-node
+# sudo docker system prune
 FROM node:18
 RUN apt-get update
 RUN apt-get install -y ghostscript
