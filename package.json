@@ -7,7 +7,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "@divo/photobook-sketches": "^1.0.4",
+    "@divo/photobook-sketches": "^1.0.5",
     "canvas": "^2.10.2",
     "canvas-sketch": "^0.7.6",
     "cookie-parser": "~1.4.4",
